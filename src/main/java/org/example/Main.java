@@ -10,8 +10,8 @@ import java.util.Set;
 
 public class Main {
 
-    final static String root = "/Users/ginalig/Documents/Coding/KPO";
-    final static String outputPath = "/Users/ginalig/Documents/Coding/output.txt";
+    final static String root = "your root path";
+    final static String outputPath = "your output path";
     public static void main(String[] args) throws FileNotFoundException {
         DependenciesGraph dependenciesGraph = new DependenciesGraph(root);
 

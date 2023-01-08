@@ -1,6 +1,5 @@
 package org.example;
 
-import org.example.model.Dependency;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -45,7 +44,6 @@ public class DependenciesGraph {
             }
         }
         scanner.close();
-        //System.out.println(dependencies);
         dependenciesGraph.put(path, dependencies);
     }
 
@@ -68,18 +66,48 @@ public class DependenciesGraph {
             List<String> fileDependencies = entry.getValue();
             BFS(file, fileDependencies, visited, files);
         }
-        for (int i = 0; i < files.size(); ++i) {
-            Path dirPath = Paths.get(root);
-            Path filePath = Paths.get(files.get(i));
-            Path relativePath = dirPath.relativize(filePath);
-            files.set(i, relativePath.toString());
-        }
+
         return files;
     }
 
-    public void printDependenciesGraph() {
-        for (Map.Entry<String, List<String>> entry : dependenciesGraph.entrySet()) {
-            System.out.println(entry.getKey() + " -> " + entry.getValue());
+    public Set<String> getCycle() {
+        for (Map.Entry<String, List<String>> entry :  dependenciesGraph.entrySet()) {
+            String file = entry.getKey();
+
+            Set<String> visited = new HashSet<>();
+            if (getCycle(file, visited) != null) {
+                return visited;
+            }
+        }
+        return null;
+    }
+
+    private Set<String> getCycle(String file, Set<String> visited) {
+        if (visited.contains(file)) {
+            return visited;
+        }
+        visited.add(file);
+        List<String> fileDependencies = dependenciesGraph.get(file);
+        if (fileDependencies != null) {
+            for (String dependency : fileDependencies) {
+                if (getCycle(dependency, visited) != null) {
+                    return visited;
+                }
+                visited.clear();
+                visited.add(file);
+            }
+        }
+
+        return null;
+    }
+
+    public void printFilesInOrder() {
+        List<String> paths = getFilesInOrder();
+        for (int i = 0; i < paths.size(); ++i) {
+            Path dirPath = Paths.get(root);
+            Path filePath = Paths.get(paths.get(i));
+            Path relativePath = dirPath.relativize(filePath);
+            System.out.println(relativePath);
         }
     }
 }

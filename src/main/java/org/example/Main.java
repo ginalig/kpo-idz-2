@@ -1,23 +1,35 @@
 package org.example;
 
-import org.example.model.Dependency;
-
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Main {
 
     final static String root = "/Users/ginalig/Documents/Coding/KPO";
-    public static void main(String[] args) {
+    final static String outputPath = "/Users/ginalig/Documents/Coding/output.txt";
+    public static void main(String[] args) throws FileNotFoundException {
         DependenciesGraph dependenciesGraph = new DependenciesGraph(root);
-        List<String> result = dependenciesGraph.getFilesInOrder();
-        for (var res : result) {
-            System.out.println(res);
+
+        Set<String> cycle = dependenciesGraph.getCycle();
+        if (cycle != null) {
+            System.out.println("Цикл между зависимостями обнаружен в файлах: ");
+            for (String s : cycle) {
+                System.out.println(s);
+            }
+            return;
         }
-        //System.out.println(result);
-        //dependenciesGraph.printDependenciesGraph();
+        try {
+            System.out.println("Список файлов: ");
+            dependenciesGraph.printFilesInOrder();
+        } catch (Exception e) {
+            System.out.println("Неверный формат зависимостей");
+            return;
+        }
+
     }
 }

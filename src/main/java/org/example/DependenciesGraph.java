@@ -15,6 +15,11 @@ public class DependenciesGraph {
         this.root = root;
         readAllFiles(root);
     }
+
+    /**
+     * Чтение всех файлов в директории и добавлние зависимостей в граф.
+     * @param path Директория, в которой происходит чтение файлов.
+     */
     private void readAllFiles(String path) {
         File file = new File(path);
         File[] files = file.listFiles();
@@ -32,6 +37,11 @@ public class DependenciesGraph {
         }
     }
 
+    /**
+     * Добавление найденных в файле зависимостей в граф.
+     * @param path Путь к файлу.
+     * @throws FileNotFoundException
+     */
     private void addDependenciesInFile(String path) throws FileNotFoundException {
         List<String> dependencies = new ArrayList<>();
         File file = new File(path);
@@ -47,6 +57,13 @@ public class DependenciesGraph {
         dependenciesGraph.put(path, dependencies);
     }
 
+    /**
+     * Обход графа.
+     * @param file Текущий файл.
+     * @param dependencies Дети.
+     * @param visited Посещенные файлы.
+     * @param result Список файлов.
+     */
     private void BFS(String file, List<String> dependencies, Set<String> visited, List<String> result) {
         if (visited.contains(file)) {
             return;
@@ -70,6 +87,10 @@ public class DependenciesGraph {
         return files;
     }
 
+    /**
+     * Проверка на цикл зависимостей.
+     * @return null, если цикл не найден, в противном случае зависимости, из которых состоит цикл.
+     */
     public Set<String> getCycle() {
         for (Map.Entry<String, List<String>> entry :  dependenciesGraph.entrySet()) {
             String file = entry.getKey();
@@ -82,6 +103,12 @@ public class DependenciesGraph {
         return null;
     }
 
+    /**
+     * Вспомогательная функция для поиска циклов.
+     * @param file
+     * @param visited
+     * @return
+     */
     private Set<String> getCycle(String file, Set<String> visited) {
         if (visited.contains(file)) {
             return visited;
@@ -101,11 +128,14 @@ public class DependenciesGraph {
         return null;
     }
 
+    /**
+     * Вывод файлов в нужном порядке.
+     */
     public void printFilesInOrder() {
         List<String> paths = getFilesInOrder();
-        for (int i = 0; i < paths.size(); ++i) {
+        for (String path : paths) {
             Path dirPath = Paths.get(root);
-            Path filePath = Paths.get(paths.get(i));
+            Path filePath = Paths.get(path);
             Path relativePath = dirPath.relativize(filePath);
             System.out.println(relativePath);
         }

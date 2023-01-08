@@ -31,5 +31,11 @@ public class Main {
             return;
         }
 
+        String concatenatedText = Concatenator.concatenateFile(dependenciesGraph.getFilesInOrder());
+        try {
+            Concatenator.writeInFile(outputPath, concatenatedText);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
